@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Person {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  nameDay     NameDay  @relation(fields: [firstName], references: [name])
+  lastName    String
+  dateOfBirth DateTime
+}
+
+model NameDay {
+  name   String   @id
+  day    DateTime
+  Person Person[]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
