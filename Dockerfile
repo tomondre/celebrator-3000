@@ -17,4 +17,4 @@ COPY --from=0 /app/build ./src
 COPY --from=0 /app/prisma ./prisma
 RUN npx prisma generate
 EXPOSE 8080
-CMD ["node","/app/src/Server.js"]
+CMD ["node","/app/src/Index.js"]

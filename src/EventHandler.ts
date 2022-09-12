@@ -3,6 +3,8 @@ import nodemailer from 'nodemailer'
 import {MailOptions} from "nodemailer/lib/smtp-transport";
 import fetch from 'node-fetch'
 import Person from "./Person";
+import client, {Connection} from 'amqplib'
+import Email from "./Email";
 
 enum CelebrationType {
     Birthday = "birthday",
@@ -35,7 +37,10 @@ export class EventHandler {
                 const text = this.parseCelebrationsToString(celebrations);
                 console.log(text);
 
-                await this.sendBasinEmail(text);
+                const email = new Email("Upcoming celebrations", text);
+
+                await this.sendEmailToRabbitMQ(email);
+                // await this.sendBasinEmail(text);
                 // await this.sendEmail(text);
             } else {
                 console.log("No celebrations for today!")
@@ -135,24 +140,40 @@ export class EventHandler {
         });
     }
 
-    private async sendBasinEmail(text: string) {
-        let basinHost = process.env.BASIN_HOST || "";
+    // private async sendBasinEmail(text: string) {
+    //     let basinHost = process.env.BASIN_HOST || "";
+    //
+    //     const body = {
+    //         Date: new Date().toLocaleDateString("en-US"),
+    //         Celebrations: text
+    //     }
+    //
+    //     const options = {
+    //         method: "POST",
+    //         headers: {'Content-Type': 'application/json'},
+    //         body: JSON.stringify(body)
+    //     }
+    //     let response = await fetch(basinHost, options);
+    //     if (response.ok) {
+    //         console.log("Email successfully send> " + JSON.stringify(options));
+    //     } else {
+    //         console.log("Email sending error> " + JSON.stringify(response));
+    //     }
+    // }
+    private async sendEmailToRabbitMQ(email: Email) {
+        const username = process.env.RABBITMQ_USERNAME;
+        const password = process.env.RABBITMQ_PASSWORD;
+        const host = process.env.RABBITMQ_HOST;
+        const port = process.env.RABBITMQ_PORT;
 
-        const body = {
-            Date: new Date().toLocaleDateString("en-US"),
-            Celebrations: text
-        }
+        const connection: Connection = await client.connect(`amqp://${username}:${password}@${host}:${port}`)
 
-        const options = {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        }
-        let response = await fetch(basinHost, options);
-        if (response.ok) {
-            console.log("Email successfully send> " + JSON.stringify(options));
-        } else {
-            console.log("Email sending error> " + JSON.stringify(response));
-        }
+        const channel = await connection.createChannel()
+
+        const queueName = "email"
+
+        await channel.assertQueue(queueName);
+        channel.sendToQueue(queueName, Buffer.from(JSON.stringify(email)));
+        await channel.close()
     }
 }
