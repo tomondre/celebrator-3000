@@ -9,6 +9,6 @@ jobs:
       - name: terraform plan
         uses: dflook/terraform-plan@v1
         env:
-          TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TF_CLOUD_TOKEN }}
+          TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TERRAFORM_CLOUD_TOKENS }}
         with:
           path: ./infrastructure
