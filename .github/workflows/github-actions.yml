@@ -6,6 +6,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Show secret
+        run:  echo ${{ secrets.TERRAFORM_CLOUD_TOKENS }}
       - name: terraform plan
         uses: dflook/terraform-plan@v1
         env:
