@@ -7,7 +7,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Show secret
-        run:  echo ${{ secrets.TERRAFORM_CLOUD_TOKENS }}
+        run:  apt-get install -y gnupg software-properties-common \
+
       - name: terraform plan
         uses: dflook/terraform-plan@v1
         env:

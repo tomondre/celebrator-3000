@@ -1,10 +1,9 @@
 import PersonDao from "./PersonDao";
 import nodemailer from 'nodemailer'
 import {MailOptions} from "nodemailer/lib/smtp-transport";
-import fetch from 'node-fetch'
 import Person from "./Person";
 import client, {Connection} from 'amqplib'
-import Email from "./Email";
+import {SendinBlueEmail, User} from "./Email";
 
 enum CelebrationType {
     Birthday = "birthday",
@@ -37,9 +36,15 @@ export class EventHandler {
                 const text = this.parseCelebrationsToString(celebrations);
                 console.log(text);
 
-                const email = new Email("Upcoming celebrations", text);
+                let emails: string[] = (process.env.EMAILS || "").split(" ");
 
-                await this.sendEmailToRabbitMQ(email);
+                for (const email of emails) {
+                    let sendinBlueEmail = new SendinBlueEmail("Celebrator 3000 Reminder!", new User("Celebrator3000", "celebrator3000@tomondre.com"), [new User("User", email)], text);
+                    console.log("Email> Sending: " + JSON.stringify(sendinBlueEmail));
+
+                    await this.sendEmailToRabbitMQ(sendinBlueEmail);
+                }
+
                 // await this.sendBasinEmail(text);
                 // await this.sendEmail(text);
             } else {
@@ -160,7 +165,7 @@ export class EventHandler {
     //         console.log("Email sending error> " + JSON.stringify(response));
     //     }
     // }
-    private async sendEmailToRabbitMQ(email: Email) {
+    private async sendEmailToRabbitMQ(email: SendinBlueEmail) {
         const username = process.env.RABBITMQ_USERNAME;
         const password = process.env.RABBITMQ_PASSWORD;
         const host = process.env.RABBITMQ_HOST;
@@ -174,6 +179,7 @@ export class EventHandler {
 
         await channel.assertQueue(queueName);
         channel.sendToQueue(queueName, Buffer.from(JSON.stringify(email)));
-        await channel.close()
+        await channel.close();
+        console.log("Send!")
     }
 }
