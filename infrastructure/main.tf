@@ -15,13 +15,13 @@ module "celebrator-3000" {
   name      = "celebrator-3000"
   image_tag = var.image_tag
   env       = {
-    BASIN_HOST = var.basin_host
-    DATABASE_URL= var.database_url
+    BASIN_HOST        = var.basin_host
+    DATABASE_URL      = var.database_url
     RABBITMQ_USERNAME = var.rabbitmq_username
     RABBITMQ_PASSWORD = var.rabbitmq_password
-    RABBITMQ_HOST = var.rabbitmq_host
-    RABBITMQ_PORT = var.rabbitmq_port
-    EMAILS = var.emails
+    RABBITMQ_HOST     = var.rabbitmq_host
+    RABBITMQ_PORT     = var.rabbitmq_port
+    EMAILS            = var.mails
   }
 }
 
@@ -31,5 +31,5 @@ variable "rabbitmq_username" {}
 variable "rabbitmq_password" {}
 variable "rabbitmq_host" {}
 variable "rabbitmq_port" {}
-variable "emails" {}
+variable "mails" {}
 variable "image_tag" {}

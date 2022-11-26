@@ -50,6 +50,6 @@ jobs:
           -var "rabbitmq_username=${{ secrets.CELEBRATOR_RABBITMQ_USERNAME }}" \
           -var "rabbitmq_password=${{ secrets.CELEBRATOR_RABBITMQ_PASSWORD }}" \
           -var "rabbitmq_host=${{ secrets.CELEBRATOR_RABBITMQ_HOST }}" \
-          -var "rabbitmq_post=${{ secrets.CELEBRATOR_RABBITMQ_PORT }}" \
+          -var "rabbitmq_port=${{ secrets.CELEBRATOR_RABBITMQ_PORT }}" \
           -var "mails=${{ secrets.CELEBRATOR_MAILS }}"
 
