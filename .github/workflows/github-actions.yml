@@ -52,4 +52,3 @@ jobs:
           -var "rabbitmq_host=${{ secrets.CELEBRATOR_RABBITMQ_HOST }}" \
           -var "rabbitmq_port=${{ secrets.CELEBRATOR_RABBITMQ_PORT }}" \
           -var "mails=${{ secrets.CELEBRATOR_EMAILS }}"
-
